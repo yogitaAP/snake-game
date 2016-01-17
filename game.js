@@ -5,3 +5,5 @@
 */
 
 //This file contains plain javasrcipt code written for a basic snake game. 
+
+//Initializing game variables
