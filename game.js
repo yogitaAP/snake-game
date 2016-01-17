@@ -10,11 +10,11 @@
 
 //Direction variables
 
-var left, right, up, down;
+var left = 0, right = 2, up = 1, down = 3;
 
 //Key Input variables
 
-var left_key, right_key, up_key, down_key;
+var left_key = 37, right_key = 39, up_key = 38, down_key = 40;
 
 //Game arena dimensions, defualts: 30 each
 
@@ -28,7 +28,7 @@ var food = 2, snake = 1, empty = 0;
 
 var canvas, context, noOfFrames, keyselections, score;	
 
-var snake = {
+var Snake = {
 
 	array: null,
 	tail: null,
@@ -93,20 +93,179 @@ var GameArena = {
 
 		for(var i = 0; i < cols; ++i) {
 			this.arena.push([]);
-			for(var j = 0; j < rows, ++y) {
+			for(var j = 0; j < rows; ++j) {
 				this.arena[i].push(val);
 			}
 		}
 
 	},
 
-	setArena: function(val, i ,j) {
+	set: function(val, i ,j) {
 		this.arena[i][j] = val;
 	},
 
-	getArena: function(i, j) {
+	get: function(i, j) {
 		return this.arena[i][j];
 	}
 };
+
+/**
+ * Set a food id at a random free cell in the grid
+ */
+function setFood() {
+	var emptyCells = [];
+	
+	// finding empty cells
+	for (var i=0; i < GameArena.width; ++i) {
+		for (var j=0; j < GameArena.height; ++j) {
+			if (GameArena.get(i, j) === empty) {
+				emptyCells.push({i:i, j:j});
+			}
+		}
+	}
+
+	// selecting one random cell
+	var randomPos = emptyCells[Math.round(Math.random()*(emptyCells.length - 1))];
+	GameArena.set(food, randomPos.i, randomPos.j);
+}
+
+function initializeGameSetup() {
+	keyselections = {};
+	noOfFrames = 0;
+	
+	canvas = document.createElement("canvas");
+	canvas.width = columns * 15;
+	canvas.height = rows * 15;
+	context = canvas.getContext("2d");
+	context.font = "12px Open_Sans";
+	
+	document.body.appendChild(canvas);
+
+	document.addEventListener("keydown", function(event) {
+		keyselections[event.keyCode] = true;
+	});
+	document.addEventListener("keyup", function(event) {
+		delete keyselections[event.keyCode];
+	});
+
+	startGame();
+	initGameloop();	 
+}
+
+function startGame() {
+	GameArena.initialize(empty, columns, rows)
+	score = 0;
+
+	var initPoint = {i: Math.floor(columns/2), j: Math.floor(rows/2)};
+
+	Snake.initialize(up, initPoint.i, initPoint.j);
+	GameArena.set(snake, initPoint.i, initPoint.j);
+
+	setFood();
+}
+
+function initGameloop() {
+	updateArena();
+	drawArena();
+	window.requestAnimationFrame(initGameloop, canvas);
+}
+
+function updateArena() {
+	noOfFrames++;
+
+	// changing direction of the snake depending on which keys
+	// that are pressed
+	if (keyselections[left_key] && Snake.direction !== right) {
+		Snake.direction = left;
+	}
+	if (keyselections[up_key] && Snake.direction !== down) {
+		Snake.direction = up;
+	}
+	if (keyselections[right_key] && Snake.direction !== left) {
+		Snake.direction = right;
+	}
+	if (keyselections[down_key] && Snake.direction !== up) {
+		Snake.direction = down;
+	}
+
+	// update game state in each 10 frames
+	if (noOfFrames % 10 === 0) {
+		// pop the last element from the snake queue i.e. the
+		// head
+		var lastX = Snake.last.i;
+		var lastY = Snake.last.j;
+
+		// updates the position depending on the snake direction
+		switch (Snake.direction) {
+			case left:
+				lastX--;
+				break;
+			case up:
+				lastY--;
+				break;
+			case right:
+				lastX++;
+				break;
+			case down:
+				lastY++;
+				break;
+		}
+
+		// checking gameover conditions
+		if (0 > lastX || lastX > GameArena.width-1  ||
+			0 > lastY || lastY > GameArena.height-1 ||
+			GameArena.get(lastX, lastY) === snake
+		) {
+			return startGame();
+		}
+
+		// check if snake's head collides with food
+		if (GameArena.get(lastX, lastY) === food) {
+			score++;
+			setFood();
+		} else {
+			// take out the first item from the snake queue i.e
+			// the tail and remove id from grid
+			var tail = Snake.removeCell();
+			GameArena.set(empty, tail.i, tail.j);
+		}
+
+		GameArena.set(snake, lastX, lastY);
+		Snake.insertCell(lastX, lastY);
+	}
+}
+
+function drawArena() {
+	var cellWidth = canvas.width/GameArena.width;
+	var cellHeight = canvas.height/GameArena.height;
+	
+	for (var i=0; i < GameArena.width; ++i) {
+		for (var j=0; j < GameArena.height; ++j) {
+			// sets the fillstyle depending on the id of
+			// each cell
+			switch (GameArena.get(i, j)) {
+				case empty:
+					context.fillStyle = "#fff";
+					break;
+				case snake:
+					context.fillStyle = "#0ff";
+					break;
+				case food:
+					context.fillStyle = "#f00";
+					break;
+			}
+			context.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellWidth);
+		}
+	}
+	// changes the fillstyle once more and draws the score
+	// message to the canvas
+	context.fillStyle = "#000";
+	context.fillText("SCORE: " + score, 10, canvas.height-10);
+}
+
+
+initializeGameSetup();
+
+
 
 
