@@ -32,7 +32,7 @@ var snake = {
 
 	array: null,
 	tail: null,
-	direction: null
+	direction: null,
 
 	/**
 	 * Initializes the array and sets the start position and direction
@@ -41,7 +41,7 @@ var snake = {
 	 * @param  {number} i start x-coordinate
 	 * @param  {number} j start y-coordinate
 	 */
-	init: function(d, i, j) {
+	initialize: function(d, i, j) {
 		this.array = [];
 		this.direction = d;
 		this.insertCell(i,j);
@@ -54,7 +54,6 @@ var snake = {
 	 * @param  {number} y y-coordinate
 	 */
 	insertCell: function(i, j) {
-
 		this.array.unshift({i:i, j:j});
 		this.last = this.array[0];
 	},
@@ -65,6 +64,48 @@ var snake = {
 	 */
 	removeCell: function() {
 		return this.array.pop();
+	}
+};
+
+/**
+ * GameArena to store the states of game objects and render the same in it.
+ * 
+ * @type {Object}
+ */
+var GameArena = {
+
+	arena: null,
+	width: null,
+	height: null,
+
+	/*
+	 * Initialize the grid with values in specified columns and rows
+	 * @param  val, default value
+	 * @param   cols, number of columns
+	 * @param   rows, number of rows
+
+	*/
+	initialize: function(val, cols, rows) {
+		this.width = cols;
+		this.height = rows;
+
+		this.arena = [];
+
+		for(var i = 0; i < cols; ++i) {
+			this.arena.push([]);
+			for(var j = 0; j < rows, ++y) {
+				this.arena[i].push(val);
+			}
+		}
+
+	},
+
+	setArena: function(val, i ,j) {
+		this.arena[i][j] = val;
+	},
+
+	getArena: function(i, j) {
+		return this.arena[i][j];
 	}
 };
 
