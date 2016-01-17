@@ -151,8 +151,7 @@ function initializeGameSetup() {
 		delete keyselections[event.keyCode];
 	});
 
-	startGame();
-	initGameloop();	 
+	$('#start-game').show();
 }
 
 function startGame() {
@@ -219,7 +218,8 @@ function updateArena() {
 			0 > lastY || lastY > GameArena.height-1 ||
 			GameArena.get(lastX, lastY) === snake
 		) {
-			return startGame();
+			$('#game-over').show();
+			$('#start-game').show();
 		}
 
 		// check if snake's head collides with food
@@ -236,6 +236,11 @@ function updateArena() {
 		GameArena.set(snake, lastX, lastY);
 		Snake.insertCell(lastX, lastY);
 	}
+}
+
+function updateScore(value) {
+	var scoreEle = $('#score');
+	scoreEle.find('span').text(value);
 }
 
 function drawArena() {
@@ -262,13 +267,23 @@ function drawArena() {
 	}
 	// changes the fillstyle once more and draws the score
 	// message to the canvas
+
+	updateScore(score);
 	
-	context.fillStyle = "#000";
-	context.fillText("SCORE: " + score, 10, canvas.height-10);
+	//context.fillStyle = "#000";
+	//context.fillText("SCORE: " + score, 10, canvas.height-10);
 }
 
-
 initializeGameSetup();
+
+
+$('#start-game').click(function(event) {
+		$('#game-over').hide();
+		startGame();
+		initGameloop();
+		$(event.target).hide();
+	})
+
 
 
 
