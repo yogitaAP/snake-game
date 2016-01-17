@@ -22,7 +22,7 @@ var columns = 30, rows = 30;
 
 //Game arena objects
 
-var food = 2, snake = 1, empty = 0;
+var snakeLength =3, food = 2, snake = 1, empty = 0;
 
 //Game display variables
 
@@ -44,7 +44,10 @@ var Snake = {
 	initialize: function(d, i, j) {
 		this.array = [];
 		this.direction = d;
-		this.insertCell(i,j);
+		for(var k=0; k < snakeLength; ++k) {
+			this.insertCell(i,j);	
+		}
+		
 	},
 
 	/**
