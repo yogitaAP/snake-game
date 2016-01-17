@@ -251,10 +251,10 @@ function drawArena() {
 					context.fillStyle = "#fff";
 					break;
 				case snake:
-					context.fillStyle = "#0ff";
+					context.fillStyle = "#73c7ab";
 					break;
 				case food:
-					context.fillStyle = "#f00";
+					context.fillStyle = "#1697c7";
 					break;
 			}
 			context.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellWidth);
@@ -262,6 +262,7 @@ function drawArena() {
 	}
 	// changes the fillstyle once more and draws the score
 	// message to the canvas
+	
 	context.fillStyle = "#000";
 	context.fillText("SCORE: " + score, 10, canvas.height-10);
 }
