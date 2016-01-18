@@ -1,5 +1,5 @@
 /*
-	Author: Yogita SHarma
+	Author: Yogita Sharma
 	Date: 18 Jan 2016
 	Time: 12: 22 : 48 AM
 */
@@ -26,7 +26,11 @@ var snakeLength =3, food = 2, snake = 1, empty = 0;
 
 //Game display variables
 
-var canvas, context, noOfFrames, keyselections, score;	
+var canvas, context, noOfFrames, keyselections, score;
+
+//game initiate flag to control restart when game is over
+
+isGameInitiated = false;	
 
 var Snake = {
 
@@ -218,7 +222,7 @@ function updateArena() {
 			0 > lastY || lastY > GameArena.height-1 ||
 			GameArena.get(lastX, lastY) === snake
 		) {
-			$('#game-over').show();
+			$('#game-over').show().text('Game Over');
 			$('#start-game').show();
 		}
 
@@ -265,13 +269,8 @@ function drawArena() {
 			context.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellWidth);
 		}
 	}
-	// changes the fillstyle once more and draws the score
-	// message to the canvas
-
-	updateScore(score);
 	
-	//context.fillStyle = "#000";
-	//context.fillText("SCORE: " + score, 10, canvas.height-10);
+	updateScore(score);
 }
 
 initializeGameSetup();
@@ -279,10 +278,16 @@ initializeGameSetup();
 
 $('#start-game').click(function(event) {
 		$('#game-over').hide();
-		startGame();
-		initGameloop();
 		$(event.target).hide();
-	})
+		if(isGameInitiated) {
+			startGame();
+			return;
+		} else {
+			startGame();
+			initGameloop();
+			isGameInitiated = true;
+		}
+	});
 
 
 
