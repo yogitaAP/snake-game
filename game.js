@@ -224,6 +224,7 @@ function updateArena() {
 		) {
 			$('#game-over').show().text('Game Over');
 			$('#start-game').show();
+			return;
 		}
 
 		// check if snake's head collides with food
